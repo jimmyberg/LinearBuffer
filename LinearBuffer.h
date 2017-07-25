@@ -80,11 +80,11 @@ public:
 	 *
 	 * @return     Value at idx.
 	 */
-	T operator[](size_t idx){
+	T& operator[](size_t idx){
 		if(idx < currentIndex)
 			return storedData[idx];
 		else{
-			return 0;
+			return storedData[0];
 		}
 	}
 	template<size_t otherSize>
@@ -93,12 +93,14 @@ public:
 		for (int i = 0; i < copySize; ++i){
 			storedData[i] = other.storedData[i];
 		}
+		return *this;
 	}
 	LinearBuffer& operator=(LinearBuffer<T, bufferSize> other){
 		size_t copySize = (currentIndex < other.currentIndex ? currentIndex : other.currentIndex);
-		for (int i = 0; i < copySize; ++i){
+		for (unsigned int i = 0; i < copySize; ++i){
 			storedData[i] = other.storedData[i];
 		}
+		return *this;
 	}
 	/**
 	 * @brief      Gets how many numbers are stored in the buffer.
