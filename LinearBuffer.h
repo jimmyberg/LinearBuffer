@@ -24,14 +24,7 @@ public:
 	 *
 	 * @return     Number of numbers retrieved from buffer.(1 or 0 when full)
 	 */
-	size_t set(const T* data){
-		if(isFull() == false){
-			storedData[currentIndex++] = *data;
-			return 1;
-		}
-		else
-			return 0;
-	}
+	size_t set(const T* data);
 	/**
 	 * @brief      Stores up to size numbers in the buffer.
 	 *
@@ -44,15 +37,7 @@ public:
 	 * @return     Number of numbers actually stored. Smaller that size
 	 *             indicates a full buffer.
 	 */
-	size_t set(const T* data, size_t size){
-		size_t currentFree = getFree();
-		if(size > currentFree)
-			size = currentFree;
-		for (unsigned int i = 0; i < size; ++i){
-			storedData[currentIndex++] = data[i];
-		}
-		return size;
-	}
+	size_t set(const T* data, size_t size);
 	/**
 	 * @brief      Gets up to size number of numbers from the buffer.
 	 *
@@ -61,18 +46,8 @@ public:
 	 *
 	 * @return     Number of numbers stored. Zero indicates an empty buffer.
 	 */
-	size_t get(T* data, size_t size){
-		if(size > currentIndex){
-			size = currentIndex;
-		}
-		for (int i = 0; i < size; ++i){
-			data[i] = storedData[i];
-		}
-		return size;
-	}
-	void clearAll(){
-		currentIndex = 0;
-	}
+	size_t get(T* data, size_t size);
+	void clearAll();
 	/**
 	 * @brief      Copies behavior of an normal array.
 	 *
@@ -80,13 +55,15 @@ public:
 	 *
 	 * @return     Value at idx.
 	 */
-	T& operator[](size_t idx){
-		if(idx < currentIndex)
-			return storedData[idx];
-		else{
-			return storedData[0];
-		}
-	}
+	T& operator[](size_t idx);
+	/**
+	 * @brief      Copies behavior of an normal array.
+	 *
+	 * @param[in]  idx   The index to access.
+	 *
+	 * @return     Value at idx.
+	 */
+	T operator[](size_t idx) const;
 	template<size_t otherSize>
 	LinearBuffer& operator=(LinearBuffer<T, otherSize> other){
 		size_t copySize = (currentIndex < other.currentIndex ? currentIndex : other.currentIndex);
@@ -95,48 +72,108 @@ public:
 		}
 		return *this;
 	}
-	LinearBuffer& operator=(LinearBuffer<T, bufferSize> other){
-		size_t copySize = (currentIndex < other.currentIndex ? currentIndex : other.currentIndex);
-		for (unsigned int i = 0; i < copySize; ++i){
-			storedData[i] = other.storedData[i];
-		}
-		return *this;
-	}
+	LinearBuffer& operator=(LinearBuffer<T, bufferSize> other);
 	/**
 	 * @brief      Gets how many numbers are stored in the buffer.
 	 *
 	 * @return     Amount of numbers stored.
 	 */
-	size_t getStored(){
-		return currentIndex;
-	}
+	size_t getStored();
 	/**
 	 * @brief      Gets free places in buffer.
 	 *
 	 * @return     Free space.
 	 */
-	unsigned int getFree(){
-		return bufferSize - currentIndex;
-	}
+	unsigned int getFree();
 	/**
 	 * @brief      Determines if full.
 	 *
 	 * @return     True if full, False otherwise.
 	 */
-	bool isFull(){
-		return (currentIndex == bufferSize);
-	}
+	bool isFull();
 	/**
 	 * @brief      Determines if empty.
 	 *
 	 * @return     True if empty, False otherwise.
 	 */
-	bool isEmpty(){
-		return (currentIndex == 0);
-	}
+	bool isEmpty();
 private:
 	T storedData[bufferSize];
 	size_t currentIndex = 0;
 };
 
 #endif //_LINEARBUFFER_H_
+
+template<typename T, size_t bufferSize>
+size_t LinearBuffer<T, bufferSize>::set(const T* data){
+	if(isFull() == false){
+		storedData[currentIndex++] = *data;
+		return 1;
+	}
+	else
+		return 0;
+}
+template<typename T, size_t bufferSize>
+size_t LinearBuffer<T, bufferSize>::set(const T* data, size_t size){
+	size_t currentFree = getFree();
+	if(size > currentFree)
+		size = currentFree;
+	for (unsigned int i = 0; i < size; ++i){
+		storedData[currentIndex++] = data[i];
+	}
+	return size;
+}
+template<typename T, size_t bufferSize>
+size_t LinearBuffer<T, bufferSize>::get(T* data, size_t size){
+	if(size > currentIndex){
+		size = currentIndex;
+	}
+	for (int i = 0; i < size; ++i){
+		data[i] = storedData[i];
+	}
+	return size;
+}
+template<typename T, size_t bufferSize>
+void LinearBuffer<T, bufferSize>::clearAll(){
+	currentIndex = 0;
+}
+template<typename T, size_t bufferSize>
+T& LinearBuffer<T, bufferSize>::operator[](size_t idx){
+	if(idx < currentIndex)
+		return storedData[idx];
+	else{
+		return storedData[0];
+	}
+}
+template<typename T, size_t bufferSize>
+T LinearBuffer<T, bufferSize>::operator[](size_t idx) const{
+	if(idx < currentIndex)
+		return storedData[idx];
+	else{
+		return storedData[0];
+	}
+}
+template<typename T, size_t bufferSize>
+LinearBuffer<T, bufferSize>& LinearBuffer<T, bufferSize>::operator=(LinearBuffer<T, bufferSize> other){
+	size_t copySize = (currentIndex < other.currentIndex ? currentIndex : other.currentIndex);
+	for (unsigned int i = 0; i < copySize; ++i){
+		storedData[i] = other.storedData[i];
+	}
+	return *this;
+}
+template<typename T, size_t bufferSize>
+size_t LinearBuffer<T, bufferSize>::getStored(){
+	return currentIndex;
+}
+template<typename T, size_t bufferSize>
+unsigned int LinearBuffer<T, bufferSize>::getFree(){
+	return bufferSize - currentIndex;
+}
+template<typename T, size_t bufferSize>
+bool LinearBuffer<T, bufferSize>::isFull(){
+	return (currentIndex == bufferSize);
+}
+template<typename T, size_t bufferSize>
+bool LinearBuffer<T, bufferSize>::isEmpty(){
+	return (currentIndex == 0);
+}
