@@ -47,6 +47,9 @@ public:
 	 * @return     Number of numbers stored. Zero indicates an empty buffer.
 	 */
 	size_t get(T* data, size_t size);
+	/**
+	 * @brief      Clears all elements in buffer.
+	 */
 	void clearAll();
 	/**
 	 * @brief      Copies behavior of an normal array.
@@ -72,6 +75,15 @@ public:
 		}
 		return *this;
 	}
+	/**
+	 * @brief      Finds a sequence of data in the buffer.
+	 *
+	 * @param[in]  c     The pattern it needs to search for
+	 * @param[in]  size  The size of the pattern.
+	 *
+	 * @return     @p true if found. @p false otherwise.
+	 */
+	bool findSequence(const T* c, size_t size);
 	LinearBuffer& operator=(LinearBuffer<T, bufferSize> other);
 	/**
 	 * @brief      Gets how many numbers are stored in the buffer.
@@ -151,6 +163,29 @@ T LinearBuffer<T, bufferSize>::operator[](size_t idx) const{
 		return storedData[idx];
 	else{
 		return storedData[0];
+	}
+}
+template<typename T, size_t bufferSize>
+bool LinearBuffer<T, bufferSize>::findSequence(const T* c, size_t size){
+	if(size > getStored()){
+		return false;
+	}
+	else{
+		size_t itemsSearched = 0;
+		size_t itemsFound = 0;
+		while(itemsSearched < getStored()){
+			if(storedData[itemsSearched] == c[itemsFound]){
+				itemsFound++;
+			}
+			else{
+				itemsFound = 0;
+			}
+			itemsSearched++;
+			if(itemsFound == size){
+				return true;
+			}
+		}
+		return false;
 	}
 }
 template<typename T, size_t bufferSize>
