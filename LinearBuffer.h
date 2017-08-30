@@ -47,6 +47,8 @@ public:
 	 * @return     Number of numbers stored. Zero indicates an empty buffer.
 	 */
 	size_t get(T* data, size_t size);
+	T front(){return (isEmpty() == false) ? storedData[0] : T();}
+	T back(){return (isEmpty() == false) ? storedData[currentIndex-1] : T();}
 	/**
 	 * @brief      Clears all elements in buffer.
 	 */
